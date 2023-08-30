@@ -1,3 +1,2 @@
 streamlit==1.2.0
-spacy==3.2.1
-spacy-streamlit
+transformers==4.11.3
