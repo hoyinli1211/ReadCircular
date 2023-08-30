@@ -2,6 +2,8 @@ import streamlit as st
 import torch  # PyTorch
 import tensorflow as tf  # TensorFlow
 from transformers import AutoTokenizer, AutoModelForQuestionAnswering
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 # Specify model name
 model_name = "bert-large-uncased-whole-word-masking-finetuned-squad"
