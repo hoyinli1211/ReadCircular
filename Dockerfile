@@ -1,14 +1,26 @@
-FROM python:3.7-slim
-COPY . /app
+# Pull base image
+FROM python:3.8-slim-buster
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# Set work directory
 WORKDIR /app
+
+# Install dependencies
+COPY requirements.txt /app/
+RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
-EXPOSE 80
-# Download model during build
+
+# Download spacy model
 RUN python -m spacy download en_core_web_sm
 
-RUN mkdir ~/.streamlit
-RUN cp config.toml ~/.streamlit/config.toml
-RUN cp credentials.toml ~/.streamlit/credentials.toml
-WORKDIR /app
-ENTRYPOINT ["streamlit", "run"]
-CMD ["App.py"]
+# Copy project
+COPY . /app/
+
+# Expose port
+EXPOSE 8501
+
+# Run the application:
+CMD streamlit run APP.py
