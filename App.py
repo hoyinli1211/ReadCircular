@@ -3,6 +3,8 @@ import streamlit as st
 import spacy
 from spacy import displacy
 from collections import defaultdict
+import en_core_web_sm
+
 
 # Load English tokenizer, tagger, parser, NER and word vectors
 nlp = spacy.load("en_core_web_sm")
