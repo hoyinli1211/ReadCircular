@@ -16,6 +16,10 @@ RUN pip install -r requirements.txt
 # Download spacy model
 RUN python -m spacy download en_core_web_sm
 
+# Check spacy info and model location
+RUN python -m spacy info --markdown
+RUN ls -la /usr/local/lib/python3.8/site-packages/en_core_web_sm
+
 # Copy project
 COPY . /app/
 
