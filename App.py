@@ -1,39 +1,51 @@
+# Importing libraries
 import streamlit as st
-import spaCy
-import numpy as np
-from sklearn.feature_extraction.text import TfidfVectorizer
+import spacy
+from spacy import displacy
+from collections import defaultdict
 
-# NLP pipeline
+# Load English tokenizer, tagger, parser, NER and word vectors
 nlp = spacy.load("en_core_web_sm")
 
-# App setup
-st.title("Question Answering from Documents")
+def process_text(file_content):
+    # Process whole documents
+    text = file_content.decode("utf-8")
+    doc = nlp(text)
 
-# Upload and process documents
-documents = []
-uploaded_files = st.file_uploader("Upload Documents", accept_multiple_files=True)
-if uploaded_files:
-  for file in uploaded_files:
-    doc = nlp(file.read().decode()) 
-    documents.append(doc)
+    # Analyze syntax
+    noun_phrases = [chunk.text for chunk in doc.noun_chunks]
+    verbs = [token.lemma_ for token in doc if token.pos_ == "VERB"]
 
-# Build TF-IDF model  
-vectorizer = TfidfVectorizer()
-tfidf = vectorizer.fit_transform([doc.text for doc in documents])
+    # Find named entities, phrases and concepts
+    entities = [(entity.text, entity.label_) for entity in doc.ents]
 
-# Get user question
-question = st.text_input("Enter your question:")
+    return noun_phrases, verbs, entities
 
-if question:
+def answer_question(question, noun_phrases, verbs, entities):
+    # Here, we're just returning the first noun phrase, verb, or entity that appears in the question.
+    # This is a very naive approach to question answering.
+    doc = nlp(question)
+    for token in doc:
+        if token.text in noun_phrases:
+            return token.text
+        elif token.text in verbs:
+            return token.text
+        for entity, _ in entities:
+            if token.text in entity:
+                return entity
+    return "I don't know."
 
-  # Vectorize question
-  q_vec = vectorizer.transform([question])
+# Streamlit app
+st.title('Document Analyzer and Question Ansower App')
+uploaded_file = st.file_uploader("Choose a file")
+if uploaded_file is not None:
+    file_content = uploaded_file.read()
+    noun_phrases, verbs, entities = process_text(file_content)
+    st.write('Noun phrases:', noun_phrases)
+    st.write('Verbs:', verbs)
+    st.write('Named entities:', entities)
 
-  # Calculate similarities
-  similarities = np.matmul(q_vec, tfidf.T)
-
-  # Get most similar document
-  most_similar_doc = np.argmax(similarities)  
-
-  # Display answer  
-  st.write(f"Most similar document: {documents[most_similar_doc]}")
+    question = st.text_input('Ask a question about the document')
+    if question:
+        answer = answer_question(question, noun_phrases, verbs, entities)
+        st.write('Answer:', answer)
