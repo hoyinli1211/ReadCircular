@@ -1,5 +1,5 @@
 import streamlit as st
-import spacy
+import spaCy
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 
