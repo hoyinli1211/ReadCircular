@@ -1,9 +1,9 @@
 # Importing libraries
 import streamlit as st
-import spacy
+#import spacy
 from spacy import displacy
 from collections import defaultdict
-import spacy_streamlit
+import spacy_streamlit as spacy
 
 # Load English tokenizer, tagger, parser, NER and word vectors
 nlp = spacy.load("en_core_web_sm")
