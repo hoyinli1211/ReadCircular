@@ -23,4 +23,4 @@ COPY . /app/
 EXPOSE 8501
 
 # Run the application:
-CMD streamlit run APP.py
+CMD streamlit run App.py
